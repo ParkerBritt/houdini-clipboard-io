@@ -8,7 +8,9 @@ class Template():
         self.is_unpacked = False
 
         path_head, path_tail = os.path.split(self.cpio_path)
+        self.file_name = path_tail
         self.name = os.path.splitext(path_tail)[0]
+        self.contents_dir = None
 
     def unpack(self,
                output: str,
@@ -20,3 +22,4 @@ class Template():
         )
         self.unpack_dir = output
         self.is_unpacked = True
+        self.contents_dir = os.path.join(self.unpack_dir, self.file_name+".dir")

@@ -26,11 +26,22 @@ def unpack_template(cpio_path: str,
 
     # change working directory to output extractred files appropriately
     old_wd = None
-    if output:
+    if not output:
+        output = os.getcwd()
+    else:
         old_wd = os.getcwd()
-        os.chdir(output)
 
-    subprocess.run(["hexpand", cpio_path])
+    _, cpio_path_tail = os.path.split(cpio_path)
+    cpio_out_dir = os.path.join(output, cpio_path_tail+".dir")
+    cpio_out_contents = os.path.join(output, cpio_path_tail+".contents")
+    os.mkdir(cpio_out_dir)
+    os.chdir(cpio_out_dir)
+    print("writing out files to:", cpio_out_dir)
+    subprocess.run(["hcpio", "-idI", cpio_path])
+
+    print("wiriting contents index to:", cpio_out_contents)
+    with open(cpio_out_contents, "w") as f:
+        subprocess.run(["hcpio", "-itI", cpio_path], stdout=f) 
     
     # restore working directory
     if old_wd:

@@ -5,7 +5,7 @@ class NodeClip():
     def __init__(self, template: Template | str):
         # get template object
         if isinstance(template, str):
-            self.template = Template("template")
+            self.template = Template(template)
         else:
             self.template = template
 
@@ -16,7 +16,9 @@ class NodeClip():
         temp_dir = tempfile.mkdtemp(prefix="hclipboard-io_", suffix="_"+self.template.name)
         print("New tmp file:", temp_dir)
         self.temp_dir = temp_dir
-        # self.template.unpack(output=temp_dir)
+        self.template.unpack(output=temp_dir)
+        print("contents_dir", self.template.contents_dir)
+        print("contents:", os.listdir(self.template.contents_dir))
 
     def clear_tmp(self):
         print("Removing tmp dir:", self.temp_dir)
@@ -24,7 +26,8 @@ class NodeClip():
             shutil.rmtree(self.temp_dir)
 
     def __del__(self):
-        self.clear_tmp()
+        # self.clear_tmp()
+        pass
         
 
 class Node():
