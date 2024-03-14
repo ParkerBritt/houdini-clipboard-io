@@ -4,7 +4,14 @@ def list_templates():
     pass
 
 def unpack_template(cpio_path: str,
-                    output: None | str = None):
+                    output: str | None = None,
+                    make_dirs: bool = False):
+    # it is up to the user to make sure the output dir is clear
+
+    # create intermediate directories
+    if output and make_dirs:
+        os.makedirs(output, exist_ok=True)
+
     # verify output exists
     if output and not os.path.exists(output):
         raise Exception("Output directory doesn't exist: "+output)
@@ -15,6 +22,7 @@ def unpack_template(cpio_path: str,
     if not os.path.splitext(cpio_path)[1]==".cpio":
         print(os.path.splitext(cpio_path))
         raise Exception("Can't unpack. File doesn't have .cpio file extension: "+cpio_path)
+
 
     # change working directory to output extractred files appropriately
     old_wd = None
