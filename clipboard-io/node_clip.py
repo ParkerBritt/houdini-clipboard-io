@@ -1,5 +1,6 @@
 import tempfile, os, shutil
 from .template import Template
+from .node import Node
 
 class NodeClip():
     def __init__(self, template: Template | str):
@@ -11,6 +12,7 @@ class NodeClip():
 
         self.is_unpacked=False
         self.temp_dir=None
+        self.nodes = []
 
     def unpack_template(self):
         temp_dir = tempfile.mkdtemp(prefix="hclipboard-io_", suffix="_"+self.template.name)
@@ -18,6 +20,9 @@ class NodeClip():
         self.temp_dir = temp_dir
         self.template.unpack(output=temp_dir)
         print("contents_dir", self.template.contents_dir)
+        self.is_unpacked=True
+
+    def list_file_contents(self):
         print("contents:", os.listdir(self.template.contents_dir))
 
     def clear_tmp(self):
@@ -25,11 +30,25 @@ class NodeClip():
         if(self.temp_dir):
             shutil.rmtree(self.temp_dir)
 
-    def __del__(self):
-        # self.clear_tmp()
-        pass
-        
+    def get_nodes(self):
+        return self.nodes
 
-class Node():
-    def __init__(self):
+    def init_nodes(self):
+        if not self.is_unpacked:
+            print("Cannot create nodes without unpacking first")
+            print("Unpacking template now")
+            self.unpack_template()
+
+        files = os.listdir(self.template.contents_dir)
+
+        for file in files:
+            suffix = ".init"
+            if file.endswith(suffix):
+                # node_name = file[:-len(suffix)]
+                new_node = Node(path=file)
+                self.nodes.append(new_node)
+
+
+    def __del__(self):
+        self.clear_tmp()
         pass
