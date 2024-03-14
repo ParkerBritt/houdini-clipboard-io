@@ -1,4 +1,4 @@
-
 template_cpio/*
 !template_cpio/README.md
 
+__pycache__
