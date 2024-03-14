@@ -4,5 +4,5 @@
   <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue">
 </p>
 
-Houdini Clipboard IO is a python module, providing tools for creating and modifying Houdini clipboard nodes in external programs.
+Houdini Clipboard IO is a python module, providing tools for creating and modifying nodes in Houdini's clipboard from external programs.
 > Early WIP
