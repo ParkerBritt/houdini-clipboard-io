@@ -5,6 +5,9 @@ class NodeClip():
         self.template = template
         pass
 
-    def checkout_template(self):
+    def unpack_template(self):
         self.template.checkout()
 
+class Node():
+    def __init__(self):
+        pass
