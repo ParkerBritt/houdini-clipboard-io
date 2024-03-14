@@ -2,7 +2,7 @@ import tempfile, os, shutil
 from .template import Template
 from .node import Node
 
-class NodeClip():
+class NodeClipboard():
     def __init__(self, template: Template | str):
         # get template object
         if isinstance(template, str):
@@ -45,7 +45,13 @@ class NodeClip():
             suffix = ".init"
             if file.endswith(suffix):
                 # node_name = file[:-len(suffix)]
-                new_node = Node(path=file)
+                
+                contents_dir = self.template.contents_dir
+                if not contents_dir:
+                    raise Exception("Content dir not set, try unpacking fore fetching value")
+                node_path = os.path.join(contents_dir, file)
+                print("ADDING NODE AT PATH", node_path)
+                new_node = Node(path=node_path)
                 self.nodes.append(new_node)
 
 
