@@ -4,6 +4,11 @@ from .node_clip import NodeClip
 # template = Template("/home/parker/Downloads/CPIO_Files/SOP_Pighead/SOP_copy.cpio")
 # template.unpack(output="/home/parker/Downloads/CPIO_Files/SOP_Pighead/output", make_dirs=True)
 
-node_clip = NodeClip(template="/home/parker/Downloads/CPIO_Files/SOP_Pighead/SOP_copy.cpio")
+template_path = "/home/parker/Downloads/CPIO_Files/SOP_Pighead/SOP_copy.cpio"
+template_path = "/home/parker/Downloads/CPIO_Files/SOP_Multifiles/SOP_copy.cpio"
+node_clip = NodeClip(template=template_path)
 
 node_clip.unpack_template()
+node_clip.list_file_contents()
+node_clip.init_nodes()
+print(node_clip.get_nodes())

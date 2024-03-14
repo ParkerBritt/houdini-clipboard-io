@@ -48,6 +48,7 @@ def unpack_template(cpio_path: str,
         os.chdir(old_wd)
 
     print("Finished unpacking:", cpio_path)
+    return (output, cpio_out_contents, cpio_out_dir)
     
 
 def unpack_all():

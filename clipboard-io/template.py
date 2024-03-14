@@ -4,6 +4,7 @@ from . import template_utils
 class Template():
     def __init__(self, path: str):
         self.cpio_path = path
+        self.nodes = []
         self.unpack_dir = None
         self.is_unpacked = False
 
@@ -15,7 +16,7 @@ class Template():
     def unpack(self,
                output: str,
                make_dirs: bool = False):
-        template_utils.unpack_template(
+        self.unpack_dir, self.contents_dir, self.content_register_dir = template_utils.unpack_template(
             self.cpio_path,
             output=output,
             make_dirs=make_dirs
@@ -23,3 +24,4 @@ class Template():
         self.unpack_dir = output
         self.is_unpacked = True
         self.contents_dir = os.path.join(self.unpack_dir, self.file_name+".dir")
+
