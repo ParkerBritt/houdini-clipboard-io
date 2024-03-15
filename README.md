@@ -6,3 +6,13 @@
 
 Houdini Clipboard IO is a python module, providing tools for creating and modifying nodes in Houdini's clipboard from external programs.
 > Early WIP
+
+## Installation
+### Requirements
+- Python >= 3.10
+- Sidefx Houdini
+
+placeholder
+
+## Usage
+placeholder
