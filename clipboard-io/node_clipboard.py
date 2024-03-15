@@ -14,6 +14,9 @@ class NodeClipboard():
         self.temp_dir=None
         self.nodes = []
 
+        self.unpack_template()
+        self.init_nodes()
+
     def unpack_template(self):
         temp_dir = tempfile.mkdtemp(prefix="hclipboard-io_", suffix="_"+self.template.name)
         print("New tmp file:", temp_dir)
