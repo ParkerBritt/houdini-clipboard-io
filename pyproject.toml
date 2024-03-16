@@ -13,3 +13,6 @@ readme = "README.md"
 
 [tool.setuptools]
 py-modules = ['hclipboard_io']
+
+[project.urls]
+Repository="https://github.com/ParkerBritt/houdini-clipboard-io"
