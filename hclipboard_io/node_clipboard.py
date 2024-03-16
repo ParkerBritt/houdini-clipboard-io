@@ -1,4 +1,4 @@
-import subprocess
+import subprocess, platform
 import tempfile, os, shutil
 from .template import Template
 from .node import Node
@@ -6,22 +6,45 @@ from . import template_utils
 
 class NodeClipboard():
     def __init__(self, template: Template | str, clean_tmp=True):
+        self.clean_tmp=clean_tmp
+        self.temp_dir=None
         # get template object
         if isinstance(template, str):
             self.template = Template(template)
         else:
             self.template = template
 
-        self.clean_tmp=clean_tmp
         self.is_unpacked=False
-        self.temp_dir=None
-        self.contents_dir=None
-        self.pack_export_file=r"/tmp/houdini_temp/SOP_copy.cpio"
+        self.unpack_template()
+        self.houdini_tmp=self.get_houdini_tmp()
+
+        # init
+        self.init_node_type()
+
         self.nodes = []
 
-        self.unpack_template()
         self.init_op_def()
         self.init_nodes()
+
+    def init_node_type(self):
+        if not self.contents_dir:
+            raise Exception("content directory not found")
+        node_type_path = os.path.join(self.contents_dir, "node_type")
+        with open(node_type_path, "r") as f:
+            self.node_type = f.read().lower().strip()
+        
+        # set export file
+        out_file_name = self.node_type.upper()+"_copy.cpio"
+        self.pack_export_file = os.path.join(self.houdini_tmp, out_file_name)
+
+    def get_houdini_tmp(self):
+        os = platform.system()
+        if os == "Windows":
+            raise Exception("windows functionality not implemented yet")
+        elif os == "Linux":
+            return r"/tmp/houdini_temp/"
+        else:
+            raise Exception("unkown os:", os)
 
     def unpack_template(self, force: bool=False):
         if self.is_unpacked and not force:
@@ -96,6 +119,6 @@ class NodeClipboard():
         pass
 
     def __del__(self):
-        if(self.clean_tmp):
+        if self.clean_tmp and self.temp_dir:
             self.clear_tmp()
         pass
