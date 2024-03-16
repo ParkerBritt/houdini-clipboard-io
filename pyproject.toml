@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hclipboard_io"
+version = "0.1.0"
+description = "Python module for creating and modifying Houdini clipboard items in external programs"
+authors = [
+    {name = "Parker Britt", email = "parker@parkerbritt.com"},
+]
+readme = "README.md"
+
+[tool.setuptools]
+py-modules = ['hclipboard_io']

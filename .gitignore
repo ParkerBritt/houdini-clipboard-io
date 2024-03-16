@@ -2,3 +2,5 @@ template_cpio/*
 !template_cpio/README.md
 
 __pycache__
+*.egg-info
+testing.py
