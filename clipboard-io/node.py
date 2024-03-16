@@ -28,11 +28,21 @@ class Node():
         return self.parms
 
     def get_parm(self, search_name: str) -> Parm | None:
+        if not self.parms_populated:
+            self.init_parms()
+
         for parm in self.parms:
             if parm.name == search_name:
                 return parm
 
         return None
+
+    def add_parm(self, parm: Parm) -> None:
+        self.parms.append(parm)
+    
+    def insert_parm(self, index: int, parm: Parm) -> None:
+        self.parms.insert(index, parm)
+
 
     def init_parms(self) -> None:
         parm_read = ""

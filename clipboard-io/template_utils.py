@@ -1,4 +1,4 @@
-import subprocess, os
+import subprocess, os, string
 
 def list_templates():
     pass
@@ -50,6 +50,26 @@ def unpack_template(cpio_path: str,
     print("Finished unpacking:", cpio_path)
     return (output, cpio_out_contents, cpio_out_dir)
     
+def extract_ascii_strings(filename:str, min_length:int=4):
+    with open(filename, 'rb') as file:
+        printable_ascii = bytes(string.printable, 'ascii')
+        result = []
+        current_string = bytearray()
+
+        byte = file.read(1)
+        while byte:
+            if byte in printable_ascii:
+                current_string.extend(byte)
+            else:
+                if len(current_string) >= min_length:
+                    result.append(current_string.decode('ascii'))
+                current_string = bytearray()
+            byte = file.read(1)
+        
+        if len(current_string) >= min_length:
+            result.append(current_string.decode('ascii'))
+
+    return '\n'.join(result)
 
 def unpack_all():
     pass

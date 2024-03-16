@@ -3,7 +3,7 @@ class Parm():
         self.name = name
         self.args = args
 
-    def set(self, value: str|int|float|list[ str|int|float ], index: int|None=None) -> None:
+    def set(self, value: str|int|float|list[ str|int|float ], index: int|None=None):
         arg_len = len(self.args)
 
         # single element inputs
@@ -28,6 +28,8 @@ class Parm():
         # unkown input
         else:
             print(f"WARNING: can't set parm {self.name} to type {type(value)}")
+
+        return self
 
     def __str__(self):
         return f"{self.name}:{self.args}"
