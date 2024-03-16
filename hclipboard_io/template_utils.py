@@ -1,10 +1,11 @@
 import subprocess, os, string
+from typing import Optional
 
 def list_templates():
     pass
 
 def unpack_template(cpio_path: str,
-                    output: str | None = None,
+                    output: Optional[str] = None,
                     make_dirs: bool = False):
     # it is up to the user to make sure the output dir is clear
 

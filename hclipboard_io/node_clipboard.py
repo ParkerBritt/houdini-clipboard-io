@@ -1,3 +1,4 @@
+from typing import List, Union, Optional
 import subprocess, platform
 import tempfile, os, shutil
 from .template import Template
@@ -5,7 +6,7 @@ from .node import Node
 from . import template_utils
 
 class NodeClipboard():
-    def __init__(self, template: Template | str, clean_tmp=True):
+    def __init__(self, template: Union[Template, str], clean_tmp=True):
         self.clean_tmp=clean_tmp
         self.temp_dir=None
         # get template object

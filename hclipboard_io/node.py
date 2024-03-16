@@ -1,4 +1,5 @@
 import os
+from typing import List, Optional, Union
 from .parm import Parm
 
 class Node():
@@ -21,13 +22,13 @@ class Node():
         self.parms_populated = False
         self.parms = []
 
-    def get_parms(self) -> list[Parm]:
+    def get_parms(self) -> List[Parm]:
         if not self.parms_populated:
             self.init_parms()
 
         return self.parms
 
-    def get_parm(self, search_name: str) -> Parm | None:
+    def get_parm(self, search_name: str) -> Optional[Parm]:
         if not self.parms_populated:
             self.init_parms()
 

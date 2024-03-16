@@ -1,9 +1,11 @@
+from typing import Union, List, Optional
+
 class Parm():
     def __init__(self, name, args: list):
         self.name = name
         self.args = args
 
-    def set(self, value: str|int|float|list[ str|int|float ], index: int|None=None):
+    def set(self, value: Union[str, int, float, List[Union[str,int,float]]], index: Optional[int]=None):
         arg_len = len(self.args)
 
         # single element inputs
