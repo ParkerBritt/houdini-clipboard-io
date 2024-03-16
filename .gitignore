@@ -3,4 +3,5 @@ template_cpio/*
 
 __pycache__
 *.egg-info
+dist
 testing.py
