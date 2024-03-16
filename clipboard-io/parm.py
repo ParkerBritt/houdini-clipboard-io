@@ -1,5 +1,5 @@
 class Parm():
-    def __init__(self, name, args):
+    def __init__(self, name, args: list):
         self.name = name
         self.args = args
 
@@ -30,6 +30,14 @@ class Parm():
             print(f"WARNING: can't set parm {self.name} to type {type(value)}")
 
         return self
+    
+    def export(self):
+        name = self.name
+        locks = "[ 0	locks=0 ]"
+        args = "\t".join(self.args)
+        export = name+"\t"+locks+"\t(\t"+args+"\t)"
+
+        return export
 
     def __str__(self):
         return f"{self.name}:{self.args}"

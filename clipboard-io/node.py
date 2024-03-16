@@ -45,12 +45,16 @@ class Node():
 
 
     def init_parms(self) -> None:
+        print("initiating parmameters")
         parm_read = ""
         with open(self.parm_path, "r", encoding="utf-8") as f:
             parm_read = f.read()
 
         # clear header and tail
-        parm_lines = parm_read.split("\n")[2:-2]
+        parm_file_split = parm_read.split("\n")
+        self.header = parm_file_split[:2]
+        self.tail = parm_file_split[-2]
+        parm_lines = parm_file_split[2:-2]
 
         for line in parm_lines:
             line_parts = line.split("\t")
@@ -65,6 +69,19 @@ class Node():
             self.parms.append(parm)
 
             self.parms_populated = True
+
+    def export(self):
+        export = "\n".join(self.header)
+        formated_parms = ""
+        for parm in self.parms:
+            formated_parms+="\n"+parm.export()
+        export += formated_parms
+        export += "\n"+self.tail
+
+        print("EXPORT:", export)
+        parm_out_path = os.path.join(self.path, self.name+".parm")
+        with open(parm_out_path, "w") as f:
+            f.write(export)
             
 
     def __str__(self):

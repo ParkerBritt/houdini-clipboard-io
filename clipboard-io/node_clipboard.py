@@ -5,16 +5,18 @@ from .node import Node
 from . import template_utils
 
 class NodeClipboard():
-    def __init__(self, template: Template | str):
+    def __init__(self, template: Template | str, clean_tmp=True):
         # get template object
         if isinstance(template, str):
             self.template = Template(template)
         else:
             self.template = template
 
+        self.clean_tmp=clean_tmp
         self.is_unpacked=False
         self.temp_dir=None
         self.contents_dir=None
+        self.pack_export_file=r"/tmp/houdini_temp/SOP_copy.cpio"
         self.nodes = []
 
         self.unpack_template()
@@ -75,9 +77,12 @@ class NodeClipboard():
                 self.nodes.append(new_node)
 
     def pack(self):
+        for node in self.nodes:
+            node.export()
+
         print("packing ocio archive")
         os.chdir(self.contents_dir)
-        pack_output = r"/home/parker/Downloads/CPIO_Files/EXPORT.cpio"
+        pack_output = self.pack_export_file
         args = ["hcpio", "-F", self.content_register_dir, "-oO", pack_output, "-H", "odc"]
         print("args:", args)
         subprocess.run(args)
@@ -91,5 +96,6 @@ class NodeClipboard():
         pass
 
     def __del__(self):
-        self.clear_tmp()
+        if(self.clean_tmp):
+            self.clear_tmp()
         pass

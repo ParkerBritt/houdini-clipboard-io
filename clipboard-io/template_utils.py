@@ -48,7 +48,7 @@ def unpack_template(cpio_path: str,
         os.chdir(old_wd)
 
     print("Finished unpacking:", cpio_path)
-    return (output, cpio_out_contents, cpio_out_dir)
+    return (output, cpio_out_dir, cpio_out_contents)
     
 def extract_ascii_strings(filename:str, min_length:int=4):
     with open(filename, 'rb') as file:
