@@ -9,10 +9,33 @@ Houdini Clipboard IO is a python module, providing tools for creating and modify
 
 ## Installation
 ### Requirements
-- Python >= 3.10
+- Python >= 3.6
 - Sidefx Houdini
 
-placeholder
+First **clone** and **cd** into the repository  
+```bash
+git clone https://github.com/ParkerBritt/houdini-clipboard-io
+cd houdini-clipboard-io
+```
+### (Option 1) Interactive installation
+Run the **install** command
+```bash
+pip install -e .
+```
+### (Option 2) Regular installation
+**Build** the tar.gz package
+```bash
+pip install build
+python -m build --sdist
+```
+**Install** the built package, make sure to type the relevant package version
+```bash
+pip install dist/hclipboard_io-0.1.0.tar.gz
+```
 
 ## Usage
+**Import** the package
+```python
+import hclipboard_io
+```
 placeholder
