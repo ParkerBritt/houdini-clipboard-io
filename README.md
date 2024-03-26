@@ -5,7 +5,8 @@
 </p>
 
 Houdini Clipboard IO is a python module, providing tools for creating and modifying nodes in Houdini's clipboard from external programs.
-> Early WIP
+> Early WIP  
+> Because of Houdini's DRM it is not possible to use .cpio files generated with a non commercial version of Houdini.
 
 ## Installation
 ### Requirements
