@@ -1,9 +1,10 @@
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict
 import subprocess, platform
 import tempfile, os, shutil
 from .template import Template
 from .node import Node
 from . import template_utils
+from .parm import Parm
 
 class NodeClipboard():
     def __init__(self, template: Union[Template, str], clean_tmp=True):
@@ -62,17 +63,47 @@ class NodeClipboard():
         self.is_unpacked=True
 
     def init_op_def(self):
-        
         op_def_path = os.path.join(self.contents_dir, ".OPdummydefs")
-        for section in template_utils.extract_ascii_strings(op_def_path).split("INDX"):
+        self.op_dummy_def = template_utils.extract_ascii_strings(op_def_path)
+        for section in self.op_dummy_def.split("INDX"):
             print("\n\n\n\n\nSPLITTER")
             lines = section.split("\n")
-            if len(lines)>7:
-                name_line = lines[7].strip()
-                if not name_line.startswith("name"):
-                    continue
-                name = name_line.split("\t")[1]
-                print("NAME:",name)
+            if len(lines)<7:
+                continue
+
+            name_line = lines[7].strip()
+            if not name_line.startswith("name"):
+                continue
+
+            name: str = name_line.split("\t")[1]
+            for i, line in enumerate(lines[:-1]):
+                parm_start = line == "    parm {"
+                has_name = lines[i+1].strip().startswith("name")
+
+                if parm_start and has_name:
+                    # print("name:", lines[i+1])
+                    max_search = 1000
+                    j = 1
+                    while j<max_search:
+                        prop_line = lines[i+j]
+                        if(prop_line=="    }"):
+                            break
+                        # prop_split
+                        # print("parm prop", )
+                        j+=1
+                    parm_properties: Dict[str, str] = {}
+                    for property_raw_str in lines[i+1:i+j]:
+                        property_list: list = property_raw_str.strip().split(" ")
+                        property_name: str = property_list[0]
+                        property_value: str = " ".join(property_list[1:]).strip()
+                        parm_properties[property_name] = property_value
+                    # print("parm_properties", parm_properties)
+                    parm = Parm(name, parm_properties)
+                    print(parm)
+
+
+            print("NAME:",name)
+
 
     def list_file_contents(self):
         print("contents:", os.listdir(self.template.contents_dir))
@@ -97,7 +128,7 @@ class NodeClipboard():
                     raise Exception("Content dir not set, try unpacking fore fetching value")
                 node_path = os.path.join(contents_dir, file)
                 print("ADDING NODE AT PATH", node_path)
-                new_node = Node(path=node_path)
+                new_node = Node(path=node_path, parent=self)
                 self.nodes.append(new_node)
 
     def pack(self):

@@ -3,11 +3,12 @@ from typing import List, Optional, Union
 from .parm import Parm
 
 class Node():
-    def __init__(self, path: str):
+    def __init__(self, path: str, parent):
         # self.path = path
         path_head, path_tail = os.path.split(path)
         self.name = os.path.splitext(path_tail)[0]
         self.path = path_head
+        self.parent_clipboard = parent
         print("IN PATH", path)
         print("self.name", self.name)
         print("self.path", self.path)
@@ -44,8 +45,12 @@ class Node():
     def insert_parm(self, index: int, parm: Parm) -> None:
         self.parms.insert(index, parm)
 
-
     def init_parms(self) -> None:
+        op_def = self.parent_clipboard.op_dummy_def
+
+        
+
+    def init_parms_old(self) -> None:
         print("initiating parmameters")
         parm_read = ""
         with open(self.parm_path, "r", encoding="utf-8") as f:
