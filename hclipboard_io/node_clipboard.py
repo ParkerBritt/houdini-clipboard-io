@@ -1,4 +1,5 @@
 from typing import List, Union, Optional, Dict
+import re
 import subprocess, platform
 import tempfile, os, shutil
 from .template import Template
@@ -64,7 +65,31 @@ class NodeClipboard():
 
     def init_op_def(self):
         op_def_path = os.path.join(self.contents_dir, ".OPdummydefs")
+            
         self.op_dummy_def = template_utils.extract_ascii_strings(op_def_path)
+        with open("/home/parker/opdef_dump.txt", "w") as f:
+            f.write(self.op_dummy_def)
+
+
+    def list_file_contents(self):
+        print("contents:", os.listdir(self.template.contents_dir))
+
+    def clear_tmp(self):
+        print("Removing tmp dir:", self.temp_dir)
+        if(self.temp_dir):
+            shutil.rmtree(self.temp_dir)
+
+    def get_nodes(self):
+        return self.nodes
+
+    def init_nodes(self):
+        print("initiating nodes")
+        node_sections = re.findall(r"(?<=^ {4})name[\s\S]+?(?:(?=^ {4}name)|\Z)", self.op_dummy_def, re.M)
+        # node_sections = re.findall(r"(?<=^\s{4})name", self.op_dummy_def, re.M)
+        print(node_sections)
+        print(len(node_sections))
+        # print(repr(self.op_dummy_def))
+        return
         for section in self.op_dummy_def.split("INDX"):
             print("\n\n\n\n\nSPLITTER")
             lines = section.split("\n")
@@ -76,6 +101,7 @@ class NodeClipboard():
                 continue
 
             name: str = name_line.split("\t")[1]
+            # name: str = re.search("(?<=(^ {4}name\s+))\S+", lines)
             for i, line in enumerate(lines[:-1]):
                 parm_start = line == "    parm {"
                 has_name = lines[i+1].strip().startswith("name")
@@ -103,33 +129,20 @@ class NodeClipboard():
 
 
             print("NAME:",name)
-
-
-    def list_file_contents(self):
-        print("contents:", os.listdir(self.template.contents_dir))
-
-    def clear_tmp(self):
-        print("Removing tmp dir:", self.temp_dir)
-        if(self.temp_dir):
-            shutil.rmtree(self.temp_dir)
-
-    def get_nodes(self):
-        return self.nodes
-
-    def init_nodes(self):
-        files = os.listdir(self.template.contents_dir)
-        for file in files:
-            suffix = ".init"
-            if file.endswith(suffix):
-                # node_name = file[:-len(suffix)]
-                
-                contents_dir = self.template.contents_dir
-                if not contents_dir:
-                    raise Exception("Content dir not set, try unpacking fore fetching value")
-                node_path = os.path.join(contents_dir, file)
-                print("ADDING NODE AT PATH", node_path)
-                new_node = Node(path=node_path, parent=self)
-                self.nodes.append(new_node)
+    # def init_nodes(self):
+    #     files = os.listdir(self.template.contents_dir)
+    #     for file in files:
+    #         suffix = ".init"
+    #         if file.endswith(suffix):
+    #             # node_name = file[:-len(suffix)]
+    #             
+    #             contents_dir = self.template.contents_dir
+    #             if not contents_dir:
+    #                 raise Exception("Content dir not set, try unpacking fore fetching value")
+    #             node_path = os.path.join(contents_dir, file)
+    #             print("ADDING NODE AT PATH", node_path)
+    #             new_node = Node(path=node_path, parent=self)
+    #             self.nodes.append(new_node)
 
     def pack(self):
         for node in self.nodes:
