@@ -8,8 +8,9 @@ class ParmDefinition():
     def __init__(self, name, properties: Dict[str, str]):
         self.name = name
 
-        print("PROPERTIES", properties)
-        # self.init_properties(properties)
+        self.init_properties(properties)
+
+        logger.debug("New Parm Definition\n"+self.__repr__()+"\n")
 
     def init_properties(self, properties):
         # label
@@ -39,14 +40,15 @@ class ParmDefinition():
             parm_range = tuple(int(num) for num in parm_range)
         self.range = parm_range
         # parmtag
-        self.parmtag = properties.get('parmtag', None)
+        self.parmtags = properties.get('parmtag', None)
 
-        self.properties = [self.label, self.type, self.size, self.default, self.range, self.parmtag]
+        self.properties = [self.label, self.type, self.size, self.default, self.range, self.parmtags]
 
-        print("\nname", self.name)
-        print("label", self.label)
-        print("type", self.type)
-        print("size", self.size)
-        print("default", self.default)
-        print("range", self.range)
-        print("parmtag", self.parmtag)
+    def __repr__(self):
+        return f"""name\t{self.name}
+label\t{self.label}
+type\t{self.type}                     
+size\t{self.size}
+default\t{self.default}
+range\t{self.range}
+parmtag\t{self.parmtags}"""
