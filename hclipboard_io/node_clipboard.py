@@ -1,11 +1,14 @@
 from typing import List, Union, Optional, Dict
 import re
-import subprocess, platform
+import subprocess, platform, logging
 import tempfile, os, shutil
 from .template import Template
 from .node import Node
 from . import template_utils
 from .parm import Parm
+from .node_definition import NodeDefinition
+from .parm_definition import ParmDefinition
+logger = logging.getLogger(__name__)
 
 class NodeClipboard():
     def __init__(self, template: Union[Template, str], clean_tmp=True):
@@ -17,6 +20,7 @@ class NodeClipboard():
         else:
             self.template = template
 
+        self.node_defitions = {}
         self.is_unpacked=False
         self.unpack_template()
         self.houdini_tmp=self.get_houdini_tmp()
@@ -27,7 +31,7 @@ class NodeClipboard():
         self.nodes = []
 
         self.init_op_def()
-        self.init_nodes()
+        self.init_nodes_definitions()
 
     def init_node_type(self):
         if not self.contents_dir:
@@ -82,7 +86,7 @@ class NodeClipboard():
     def get_nodes(self):
         return self.nodes
 
-    def init_nodes(self):
+    def init_nodes_definitions(self):
         print("initiating nodes")
         node_sections = re.findall(r"(?<=^ {4})name[\s\S]+?(?:(?=^})|\Z)", self.op_dummy_def, re.M)
         # node_sections = re.findall(r"(?<=^\s{4})name", self.op_dummy_def, re.M)
@@ -94,26 +98,40 @@ class NodeClipboard():
             node_name = node_name.group()
 
             node_type = re.search
-            print("ATTEMPTING TO CREATE NODE:", node_name)
+            logger.debug(f"ATTEMPTING TO CREATE NODE: {node_name}")
             node_type_search = re.search(r"(?P<type>\w+op)/"+node_name, self.op_dummy_def)
             if not node_type_search:
                 raise Exception("couldn't find node type for:", node_name)
             node_type = node_type_search.group("type").lower()
+            logger.debug(f"node type: {node_type}")
 
             # skip vops since they're unsupported
             if node_type == "vop":
+                logger.debug(f"disregarding {node_type} node")
                 continue
+            
+            # make node defition
+            new_node_definition = NodeDefinition(node_name, node_type)
+            self.node_defitions[node_name] = new_node_definition
+        
 
             # make node
             # new_node = Node(node_name, parent=self)
             # self.nodes.append(new_node)
 
-            continue
             # paramer values:
             parameter_raw_values = re.findall(r"(?<=^ {4}parm {\n)[\s\S]+?(?=\n^ {4}})", section, re.M)
-            for value in parameter_raw_values:
-                print("split")
-                print(value)
+            for values in parameter_raw_values:
+                parm_name =  re.search(r"(?<=name {4}\")[^\n]+(?=\")", values)
+                if not parm_name:
+                    raise Exception(f"cannot file parm name for {parameter_raw_values}")
+                parm_name = parm_name.group()
+                # parm_line = re.findall(r" {8}\w+(\s+{)?(?(1)[\S\s]+?(?<=})|[\S\s]*?(?<=$))", values, re.M)
+                parm_re_pattern = r"( {8}\w+(\s+{)?(?(1)[\S\s]+?}|[\S\s]*?$))"
+                matches = [match.group(0) for match in re.finditer(parm_re_pattern, values, re.MULTILINE)]
+                for line in matches:
+                    print(line)
+                # new_node_definition.add_parm_definition(parm_name, matches)
         # print(repr(self.op_dummy_def))
         return
         for section in self.op_dummy_def.split("INDX"):

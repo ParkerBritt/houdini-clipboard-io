@@ -16,6 +16,7 @@ class Node():
         # print("HEAD", self.path, "tail", self.name)
 
         if not os.path.exists(self.parm_path):
+            print("File Contents\n", os.listdir(self.path))
             raise Exception(f"Could not find .parm component of {self.name} parm at: {self.parm_path}")
 
         # don't populate parms until a query is made
