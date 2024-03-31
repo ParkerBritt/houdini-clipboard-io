@@ -3,13 +3,12 @@ from typing import List, Optional, Union
 from .parm import Parm
 
 class Node():
-    def __init__(self, path: str, parent):
-        # self.path = path
-        path_head, path_tail = os.path.split(path)
-        self.name = os.path.splitext(path_tail)[0]
-        self.path = path_head
+    def __init__(self, name: str, parent):
+        self.name = name
+        self.path = parent.template.contents_dir
         self.parent_clipboard = parent
-        print("IN PATH", path)
+
+        print("new node")
         print("self.name", self.name)
         print("self.path", self.path)
 

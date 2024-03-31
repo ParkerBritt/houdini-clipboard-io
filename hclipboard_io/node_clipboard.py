@@ -84,10 +84,36 @@ class NodeClipboard():
 
     def init_nodes(self):
         print("initiating nodes")
-        node_sections = re.findall(r"(?<=^ {4})name[\s\S]+?(?:(?=^ {4}name)|\Z)", self.op_dummy_def, re.M)
+        node_sections = re.findall(r"(?<=^ {4})name[\s\S]+?(?:(?=^})|\Z)", self.op_dummy_def, re.M)
         # node_sections = re.findall(r"(?<=^\s{4})name", self.op_dummy_def, re.M)
-        print(node_sections)
-        print(len(node_sections))
+        for section in node_sections:
+            # node name
+            node_name = re.search(r"(?<=^name\t)\S+", section, re.M)
+            if not node_name:
+                raise Exception("Couldn't find name for node section:\n"+section)
+            node_name = node_name.group()
+
+            node_type = re.search
+            print("ATTEMPTING TO CREATE NODE:", node_name)
+            node_type_search = re.search(r"(?P<type>\w+op)/"+node_name, self.op_dummy_def)
+            if not node_type_search:
+                raise Exception("couldn't find node type for:", node_name)
+            node_type = node_type_search.group("type").lower()
+
+            # skip vops since they're unsupported
+            if node_type == "vop":
+                continue
+
+            # make node
+            # new_node = Node(node_name, parent=self)
+            # self.nodes.append(new_node)
+
+            continue
+            # paramer values:
+            parameter_raw_values = re.findall(r"(?<=^ {4}parm {\n)[\s\S]+?(?=\n^ {4}})", section, re.M)
+            for value in parameter_raw_values:
+                print("split")
+                print(value)
         # print(repr(self.op_dummy_def))
         return
         for section in self.op_dummy_def.split("INDX"):
