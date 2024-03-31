@@ -129,10 +129,23 @@ class NodeClipboard():
                 # parm_line = re.findall(r" {8}\w+(\s+{)?(?(1)[\S\s]+?(?<=})|[\S\s]*?(?<=$))", values, re.M)
                 parm_re_pattern = r" {8}\w+(\s+{)?(?(1)[\S\s]+?}|[\S\s]*?$)"
                 matches = [match.group(0) for match in re.finditer(parm_re_pattern, values, re.MULTILINE)]
+                parm_properties: dict = {}
                 for line in matches:
-                    print(line)
-                # new_node_definition.add_parm_definition(parm_name, matches)
-        # print(repr(self.op_dummy_def))
+                    property_list: list = line.strip().split(" ")
+                    property_name: str = property_list[0]
+                    property_value: str = " ".join(property_list[1:]).strip()
+                    
+                    # add item to list 
+                    if property_name == "parmtag":
+                        if not property_name in parm_properties:
+                            parm_properties[property_name] = []
+                        parm_properties[property_name].append(property_value)
+                        continue
+
+                    # add item directly
+                    parm_properties[property_name] = property_value
+
+                new_node_definition.add_parm_definition(parm_name, parm_properties)
         return
         for section in self.op_dummy_def.split("INDX"):
             print("\n\n\n\n\nSPLITTER")
