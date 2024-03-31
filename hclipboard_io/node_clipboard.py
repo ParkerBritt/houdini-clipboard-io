@@ -127,7 +127,7 @@ class NodeClipboard():
                     raise Exception(f"cannot file parm name for {parameter_raw_values}")
                 parm_name = parm_name.group()
                 # parm_line = re.findall(r" {8}\w+(\s+{)?(?(1)[\S\s]+?(?<=})|[\S\s]*?(?<=$))", values, re.M)
-                parm_re_pattern = r"( {8}\w+(\s+{)?(?(1)[\S\s]+?}|[\S\s]*?$))"
+                parm_re_pattern = r" {8}\w+(\s+{)?(?(1)[\S\s]+?}|[\S\s]*?$)"
                 matches = [match.group(0) for match in re.finditer(parm_re_pattern, values, re.MULTILINE)]
                 for line in matches:
                     print(line)
