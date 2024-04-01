@@ -15,3 +15,6 @@ class NodeDefinition():
     def add_parm_definition(self, name: str, raw_properties: Dict[str, str]):
         new_parm =  ParmDefinition(name, raw_properties)
         self.parm_definitions[name] = new_parm
+
+    def get_parm_definition(self, name):
+        return self.parm_definitions.get(name, None)

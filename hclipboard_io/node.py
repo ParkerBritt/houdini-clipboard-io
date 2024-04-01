@@ -1,19 +1,16 @@
-import os
+import os, logging, re
 from typing import List, Optional, Union
 from .parm import Parm
+logger = logging.getLogger(__name__)
 
 class Node():
     def __init__(self, name: str, parent):
         self.name = name
         self.path = parent.template.contents_dir
         self.parent_clipboard = parent
-
-        print("new node")
-        print("self.name", self.name)
-        print("self.path", self.path)
+        print("ALL DEFS:", parent.node_definitions)
 
         self.parm_path = os.path.join(self.path, self.name+".parm")
-        # print("HEAD", self.path, "tail", self.name)
 
         if not os.path.exists(self.parm_path):
             print("File Contents\n", os.listdir(self.path))
@@ -22,6 +19,35 @@ class Node():
         # don't populate parms until a query is made
         self.parms_populated = False
         self.parms = []
+
+        self.init_type()
+
+        self.node_definition = parent.node_definitions[self.type] 
+        logger.debug(f"{self.name} NODE DEF: {self.node_definition}")
+
+        # need definition first for init parms
+        self.init_parms() # maybe lazy load these later
+
+        logger.debug(f"node created\nname\t{self.name}\ntype\t{self.type}\n")
+
+    def init_type(self) -> None:
+
+        node_init_path = os.path.join(self.path, self.name+".init")
+        with open(node_init_path, "r", encoding="utf-8") as f:
+            init_read = f.read()
+
+        # get .init file lines
+        node_init_split = init_read.split("\n")
+        # safety check
+        if len(node_init_split) == 0: 
+            raise Exception("{self.name}.init file empty")
+
+        # get node type
+        type_search = re.search(r"(?<=type = )[\S\s]+?$", node_init_split[0])
+        # safety check
+        if not type_search:
+            raise Exception("couldn't find type for node: {self.name}")
+        self.type = type_search.group()
 
     def get_parms(self) -> List[Parm]:
         if not self.parms_populated:
@@ -45,12 +71,18 @@ class Node():
     def insert_parm(self, index: int, parm: Parm) -> None:
         self.parms.insert(index, parm)
 
-    def init_parms(self) -> None:
-        op_def = self.parent_clipboard.op_dummy_def
+    # def init_parms(self) -> None:
+    #     parm_read = ""
+    #     with open(self.parm_path, "r", encoding="utf-8") as f:
+    #         parm_read = f.read()
+    #     self.version = float(re.search(r"(?<=version )[\d.]+", parm_read).group())
+    #     print("version:", version)
+    #
+    #     # op_def = self.parent_clipboard.op_dummy_def
 
         
 
-    def init_parms_old(self) -> None:
+    def init_parms(self) -> None:
         print("initiating parmameters")
         parm_read = ""
         with open(self.parm_path, "r", encoding="utf-8") as f:
@@ -58,8 +90,8 @@ class Node():
 
         # clear header and tail
         parm_file_split = parm_read.split("\n")
-        self.header = parm_file_split[:2]
-        self.tail = parm_file_split[-2]
+        self.parm_header = parm_file_split[:2]
+        self.parm_tail = parm_file_split[-2]
         parm_lines = parm_file_split[2:-2]
 
         for line in parm_lines:
@@ -71,18 +103,19 @@ class Node():
             # print(f"name: {name}, args: {args}")
             # print(line)
 
-            parm = Parm(name, args)
+            parm = Parm(name, "\t".join(args), parent=self)
             self.parms.append(parm)
 
             self.parms_populated = True
 
     def export(self):
-        export = "\n".join(self.header)
+        # head = "{\nversion "+self.version_num+"\n"
+        # tail = "}"
+        head, tail = (self.parm_header, self.parm_tail)
         formated_parms = ""
         for parm in self.parms:
             formated_parms+="\n"+parm.export()
-        export += formated_parms
-        export += "\n"+self.tail
+        export = f"\n{head}\n{formated_parms}\n{tail}"
 
         print("EXPORT:", export)
         parm_out_path = os.path.join(self.path, self.name+".parm")

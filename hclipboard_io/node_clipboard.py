@@ -20,7 +20,7 @@ class NodeClipboard():
         else:
             self.template = template
 
-        self.node_defitions = {}
+        self.node_definitions: Dict[str, NodeDefinition] = {}
         self.is_unpacked=False
         self.unpack_template()
         self.houdini_tmp=self.get_houdini_tmp()
@@ -32,6 +32,7 @@ class NodeClipboard():
 
         self.init_op_def()
         self.init_nodes_definitions()
+        self.init_nodes()
 
     def init_node_type(self):
         if not self.contents_dir:
@@ -112,7 +113,7 @@ class NodeClipboard():
             
             # make node defition
             new_node_definition = NodeDefinition(node_name, node_type)
-            self.node_defitions[node_name] = new_node_definition
+            self.node_definitions[node_name] = new_node_definition
         
 
             # make node
@@ -146,60 +147,21 @@ class NodeClipboard():
                     parm_properties[property_name] = property_value
 
                 new_node_definition.add_parm_definition(parm_name, parm_properties)
-        return
-        for section in self.op_dummy_def.split("INDX"):
-            print("\n\n\n\n\nSPLITTER")
-            lines = section.split("\n")
-            if len(lines)<7:
-                continue
 
-            name_line = lines[7].strip()
-            if not name_line.startswith("name"):
-                continue
-
-            name: str = name_line.split("\t")[1]
-            # name: str = re.search("(?<=(^ {4}name\s+))\S+", lines)
-            for i, line in enumerate(lines[:-1]):
-                parm_start = line == "    parm {"
-                has_name = lines[i+1].strip().startswith("name")
-
-                if parm_start and has_name:
-                    # print("name:", lines[i+1])
-                    max_search = 1000
-                    j = 1
-                    while j<max_search:
-                        prop_line = lines[i+j]
-                        if(prop_line=="    }"):
-                            break
-                        # prop_split
-                        # print("parm prop", )
-                        j+=1
-                    parm_properties: Dict[str, str] = {}
-                    for property_raw_str in lines[i+1:i+j]:
-                        property_list: list = property_raw_str.strip().split(" ")
-                        property_name: str = property_list[0]
-                        property_value: str = " ".join(property_list[1:]).strip()
-                        parm_properties[property_name] = property_value
-                    # print("parm_properties", parm_properties)
-                    parm = Parm(name, parm_properties)
-                    print(parm)
-
-
-            print("NAME:",name)
-    # def init_nodes(self):
-    #     files = os.listdir(self.template.contents_dir)
-    #     for file in files:
-    #         suffix = ".init"
-    #         if file.endswith(suffix):
-    #             # node_name = file[:-len(suffix)]
-    #             
-    #             contents_dir = self.template.contents_dir
-    #             if not contents_dir:
-    #                 raise Exception("Content dir not set, try unpacking fore fetching value")
-    #             node_path = os.path.join(contents_dir, file)
-    #             print("ADDING NODE AT PATH", node_path)
-    #             new_node = Node(path=node_path, parent=self)
-    #             self.nodes.append(new_node)
+    def init_nodes(self):
+        files = os.listdir(self.template.contents_dir)
+        for file in files:
+            suffix = ".parm"
+            if file.endswith(suffix):
+                node_name = file[:-len(suffix)]
+                
+                contents_dir = self.contents_dir
+                if not contents_dir:
+                    raise Exception("Content dir not set, try unpacking fore fetching value")
+                node_path = os.path.join(contents_dir, file)
+                print("ADDING NODE AT PATH", node_path)
+                new_node = Node(node_name, parent=self)
+                self.nodes.append(new_node)
 
     def pack(self):
         for node in self.nodes:
