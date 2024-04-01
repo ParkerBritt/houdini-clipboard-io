@@ -34,6 +34,12 @@ class NodeClipboard():
         self.init_nodes_definitions()
         self.init_nodes()
 
+    def get_node(self, node_name) -> Union[Node, None]:
+        for node in self.nodes:
+            if node.name == node_name:
+                return node
+        return None
+
     def init_node_type(self):
         if not self.contents_dir:
             raise Exception("content directory not found")

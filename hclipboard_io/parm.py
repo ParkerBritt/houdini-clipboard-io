@@ -18,6 +18,11 @@ class Parm():
         out_val = value
         if self.type in ("string", "toggle", "ordinal"):
             out_val = value.strip('"')
+<<<<<<< HEAD
+=======
+        if self.type in ("vector"):
+            out_val = value.split("\t")
+>>>>>>> main
         return out_val
 
     def export_processing(self) -> str:
@@ -106,7 +111,11 @@ class Parm():
         if self.type in ("string", "ordinal", "toggle"):
             formatted_val = f"\"{self.value}\""
         if self.type in ("vector", "color"):
+<<<<<<< HEAD
             formatted_val = "\t".join(self.value)
+=======
+            formatted_val = "\t".join((str(value) for value in unformatted_value))
+>>>>>>> main
         return formatted_val
 
     

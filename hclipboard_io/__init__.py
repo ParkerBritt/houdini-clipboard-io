@@ -1,1 +1,1 @@
-print("foo")
+from .node_clipboard import NodeClipboard
