@@ -176,8 +176,10 @@ class NodeClipboard():
         pass
 
     def export_to_clipboard(self):
-
-        pass
+        for node in self.nodes:
+            node.export()
+        self.pack()
+        
 
     def export_to_path(self, path: str):
         pass
