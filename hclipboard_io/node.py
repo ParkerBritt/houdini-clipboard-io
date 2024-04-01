@@ -67,6 +67,9 @@ class Node():
 
     def add_parm(self, parm: Parm) -> None:
         self.parms.append(parm)
+
+    def set_parm(self, parm_name: str, parm_val):
+        self.get_parm(parm_name).set(parm_val)
     
     def insert_parm(self, index: int, parm: Parm) -> None:
         self.parms.insert(index, parm)
