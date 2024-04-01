@@ -114,11 +114,12 @@ class Node():
         head, tail = (self.parm_header, self.parm_tail)
         formated_parms = ""
         for parm in self.parms:
-            formated_parms+="\n"+parm.export()
-        export = f"\n{head}\n{formated_parms}\n{tail}"
+            formated_parms+="\n"+parm.export_processing()
+        export = f"\n{"\n".join(head)}\n{formated_parms}\n{tail}"
 
         print("EXPORT:", export)
         parm_out_path = os.path.join(self.path, self.name+".parm")
+        logger.debug(f"Writing parameters to {parm_out_path}")
         with open(parm_out_path, "w") as f:
             f.write(export)
             

@@ -4,12 +4,30 @@ import re
 class Parm():
     def __init__(self, name, value, parent):
         self.name = name
-        self.value = value 
 
         self.node = parent
         self.definition = self.node.node_definition.get_parm_definition(self.name)
 
+        self.type = self.definition.type
+
+        self.value = self.input_preprocessing(value) 
+
         # self.init_properties(self.raw_value)
+
+    def input_preprocessing(self, value: str):
+        out_val = value
+        if self.type in ("string", "toggle", "ordinal"):
+            out_val = value.strip('"')
+        return out_val
+
+    def export_processing(self) -> str:
+        name = self.name
+        locks = "[ 0	locks=0 ]" # still need to figure this out
+
+        formatted_val = self.get_formatted_value(self.value)
+        export = name+"\t"+locks+"\t(\t"+formatted_val+"\t)"
+
+        return export
 
     def set(self, value: Union[str, int, float, List[Union[str,int,float]]], index: Optional[int]=None):
         self.value = value
@@ -85,21 +103,13 @@ class Parm():
 
 
         formatted_val: Union[int, tuple, str] = unformatted_value
-        if self.type in ("string", "ordinal"):
+        if self.type in ("string", "ordinal", "toggle"):
             formatted_val = f"\"{self.value}\""
         if self.type in ("vector", "color"):
             formatted_val = "\t".join(self.value)
         return formatted_val
 
     
-    def export(self):
-        name = self.name
-        locks = "[ 0	locks=0 ]" # still need to figure this out
-
-        formatted_val = self.get_formatted_value(self.value)
-        export = name+"\t"+locks+"\t(\t"+formatted_val+"\t)"
-
-        return export
 
     def __str__(self):
         return f"{self.name}:{self.properties}"
