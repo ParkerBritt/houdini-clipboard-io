@@ -1,3 +1,7 @@
+<p align="center">
+<a href="docs/">
+  <img height="150em" src="docs/resources/hclipboard_logo.svg"/>
+</a></p>
 <h1 align="center">Houdini Clipboard IO</h1>
 <p align="center"}>
   <img src="https://img.shields.io/badge/Houdini-FF4713?style=for-the-badge&logo=houdini&logoColor=white">
