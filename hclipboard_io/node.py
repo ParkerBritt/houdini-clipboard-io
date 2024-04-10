@@ -8,12 +8,15 @@ class Node():
         self.name = name
         self.path = parent.template.contents_dir
         self.parent_clipboard = parent
-        print("ALL DEFS:", parent.node_definitions)
+        logger.debug("ALL DEFS:", parent.node_definitions)
+
+        self.component_files = [file for file in os.listdir(self.path) if file.startswith(self.name+".")]
+        logger.debug("comonent files: {self.component_files}")
 
         self.parm_path = os.path.join(self.path, self.name+".parm")
 
         if not os.path.exists(self.parm_path):
-            print("File Contents\n", os.listdir(self.path))
+            logger.debug("File Contents\n", os.listdir(self.path))
             raise Exception(f"Could not find .parm component of {self.name} parm at: {self.parm_path}")
 
         # don't populate parms until a query is made
@@ -48,6 +51,12 @@ class Node():
         if not type_search:
             raise Exception("couldn't find type for node: {self.name}")
         self.type = type_search.group()
+
+    def delete(self) -> None:
+        for file in self.component_files:
+            file_path = os.path.join(self.path, file)
+            print(os.path.exits(file_path))
+
 
     def get_parms(self) -> List[Parm]:
         if not self.parms_populated:
@@ -86,7 +95,7 @@ class Node():
         
 
     def init_parms(self) -> None:
-        print("initiating parmameters")
+        logger.debug("initiating parmameters")
         parm_read = ""
         with open(self.parm_path, "r", encoding="utf-8") as f:
             parm_read = f.read()
@@ -120,7 +129,7 @@ class Node():
             formated_parms+="\n"+parm.export_processing()
         export = f"\n{"\n".join(head)}\n{formated_parms}\n{tail}"
 
-        print("EXPORT:", export)
+        logger.debug("EXPORT:", export)
         parm_out_path = os.path.join(self.path, self.name+".parm")
         logger.debug(f"Writing parameters to {parm_out_path}")
         with open(parm_out_path, "w") as f:
