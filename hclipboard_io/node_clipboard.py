@@ -186,11 +186,10 @@ class NodeClipboard():
             node.export()
         self.pack()
         
-
     def export_to_path(self, path: str):
         pass
 
     def __del__(self):
         if self.clean_tmp and self.temp_dir:
             self.clear_tmp()
-        pass
+            pass

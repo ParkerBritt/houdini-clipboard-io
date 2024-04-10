@@ -53,10 +53,28 @@ class Node():
         self.type = type_search.group()
 
     def delete(self) -> None:
+        parent = self.parent_clipboard
         for file in self.component_files:
             file_path = os.path.join(self.path, file)
-            print(os.path.exits(file_path))
+            if not os.path.exists(file_path):
+                logger.warning(f"Could not delete file, file does not exists: {file_path}")
+                continue
+            logger.debug(f"Deleting file: {file_path}")
+            os.remove(file_path)
 
+        # delete file references from register
+        with open(parent.content_register_dir, "r") as f:
+            f_split = f.read().split("\n")
+            f_split = [line for line in f_split if not line in self.component_files]
+
+        with open(parent.content_register_dir, "w") as f:
+            f.write("\n".join(f_split))
+                    
+        # delete node reference from clipboard
+        for i, node in enumerate(self.parent_clipboard.nodes):
+            if node == self:
+                self.parent_clipboard.nodes.pop(i)
+                break
 
     def get_parms(self) -> List[Parm]:
         if not self.parms_populated:
@@ -129,7 +147,7 @@ class Node():
             formated_parms+="\n"+parm.export_processing()
         export = f"\n{"\n".join(head)}\n{formated_parms}\n{tail}"
 
-        logger.debug("EXPORT:", export)
+        logger.debug(f"EXPORT: {export}")
         parm_out_path = os.path.join(self.path, self.name+".parm")
         logger.debug(f"Writing parameters to {parm_out_path}")
         with open(parm_out_path, "w") as f:
